@@ -1,0 +1,73 @@
+<div class="modal-overlay" (click)="cancel()" (keydown.escape)="cancel()" tabindex="0" role="dialog" aria-modal="true">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-card__header">
+      <div class="header-info">
+        <span class="modal-icon">{{ isEditing ? '✏️' : '⚡' }}</span>
+        <h2>{{ isEditing ? 'Editar Aparelho' : 'Novo Aparelho' }}</h2>
+      </div>
+      <button type="button" class="close-btn" (click)="cancel()" aria-label="Fechar modal">✕</button>
+    </div>
+
+    <form (ngSubmit)="submit()" class="modal-card__body">
+      <div class="form-group">
+        <label for="appliance-name">Nome do Aparelho</label>
+        <input 
+          id="appliance-name"
+          type="text" 
+          placeholder="Ex: Ar-condicionado 12k BTUs"
+          [ngModel]="nameField()" 
+          (ngModelChange)="nameField.set($event)" 
+          name="name"
+          required
+          maxlength="50"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="appliance-power">Potência (Watts)</label>
+        <div class="input-with-unit">
+          <input 
+            id="appliance-power"
+            type="number" 
+            placeholder="Ex: 1500"
+            [ngModel]="powerField()" 
+            (ngModelChange)="powerField.set($event)" 
+            name="powerWatts"
+            min="1"
+            max="20000"
+            required
+          />
+          <span class="unit-tag">W</span>
+        </div>
+      </div>
+
+      <!-- Live Current Estimation Preview -->
+      <div class="estimation-box">
+        <div class="estimation-box__label">
+          <span>🔌 Corrente Estimada (220V):</span>
+          <span class="estimation-value">{{ estimatedCurrent() | number:'1.2-2' }} A</span>
+        </div>
+        <div class="estimation-box__bar">
+          <div 
+            class="estimation-box__fill"
+            [style.width.%]="(estimatedCurrent() / 41) * 100"
+          ></div>
+        </div>
+      </div>
+
+      <div class="modal-card__footer">
+        <button type="button" class="btn btn--cancel" (click)="cancel()">
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn--submit" 
+          [disabled]="!applianceForm.valid()"
+        >
+          {{ isEditing ? 'Salvar Alterações' : 'Adicionar Aparelho' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

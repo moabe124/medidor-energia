@@ -1,0 +1,57 @@
+<div 
+  class="appliance-card" 
+  [class.appliance-card--active]="appliance().isOn"
+>
+  <div class="appliance-card__header">
+    <h3 class="appliance-card__title" [title]="appliance().name">
+      {{ appliance().name }}
+    </h3>
+
+    <label class="toggle-switch" [attr.aria-label]="'Ligar ou desligar ' + appliance().name">
+      <input 
+        type="checkbox" 
+        [checked]="appliance().isOn" 
+        (change)="toggle()"
+      />
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="appliance-card__metrics">
+    <div class="metric-item">
+      <span class="metric-item__icon">⚡</span>
+      <span class="metric-item__value">{{ appliance().powerWatts | number:'1.0-0' }} W</span>
+    </div>
+
+    <div class="metric-item">
+      <span class="metric-item__icon">🔌</span>
+      <span class="metric-item__value">{{ appliance().currentAmps | number:'1.2-2' }} A</span>
+    </div>
+  </div>
+
+  <div class="appliance-card__footer">
+    <span class="status-indicator" [class.status-indicator--on]="appliance().isOn">
+      {{ appliance().isOn ? 'LIGADO' : 'DESLIGADO' }}
+    </span>
+
+    <div class="appliance-card__actions">
+      <button 
+        type="button" 
+        class="action-btn action-btn--edit" 
+        (click)="edit()"
+        title="Editar aparelho"
+      >
+        ✏️
+      </button>
+
+      <button 
+        type="button" 
+        class="action-btn action-btn--delete" 
+        (click)="delete()"
+        title="Excluir aparelho"
+      >
+        🗑️
+      </button>
+    </div>
+  </div>
+</div>

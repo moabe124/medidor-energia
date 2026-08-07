@@ -1,0 +1,53 @@
+<header 
+  class="header" 
+  [class.header--safe]="service.loadStatus() === 'safe'"
+  [class.header--warning]="service.loadStatus() === 'warning'"
+  [class.header--overload]="service.loadStatus() === 'overload'"
+>
+  <div class="header__container">
+    <div class="header__brand">
+      <h1 class="header__title">Medidor de Energia</h1>
+      <p class="header__subtitle">Monitoramento 220V • Fiação 41A</p>
+    </div>
+
+    <!-- Giant Bulb Dashboard Display -->
+    <div class="giant-bulb-wrapper" [ngClass]="'status--' + service.loadStatus()">
+      <div class="giant-bulb">
+        <!-- SVG Bulb Icon -->
+        <svg class="bulb-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2Z" class="bulb-glass" />
+          <path d="M9 20H15V21C15 21.55 14.55 22 14 22H10C9.45 22 9 21.55 9 21V20Z" class="bulb-base" />
+          <path d="M10 13L12 9L14 13" class="bulb-filament" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div class="bulb-glow"></div>
+      </div>
+
+      <div class="bulb-metrics">
+        <div class="bulb-metrics__primary">
+          <span class="amps-value">{{ service.totalCurrentAmps() | number:'1.2-2' }}</span>
+          <span class="amps-unit">A</span>
+          <span class="amps-limit">/ {{ maxAmps }}A</span>
+        </div>
+
+        <div class="bulb-metrics__secondary">
+          <span class="watts-value">⚡ {{ service.totalPowerWatts() | number:'1.0-0' }} W</span>
+          <span class="status-badge" [ngClass]="'badge--' + service.loadStatus()">
+            @switch (service.loadStatus()) {
+              @case ('safe') { 🟢 SEGURO }
+              @case ('warning') { 🟡 ATENÇÃO }
+              @case ('overload') { 🔴 SOBRECARGA! }
+            }
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header__progress-container">
+    <div 
+      class="header__progress-bar"
+      [ngClass]="'progress--' + service.loadStatus()"
+      [style.width.%]="service.usagePercent()"
+    ></div>
+  </div>
+</header>

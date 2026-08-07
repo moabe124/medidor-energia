@@ -1,0 +1,54 @@
+<section class="appliances-section">
+  <div class="appliances-section__header">
+    <div class="header-title">
+      <h2>Aparelhos Cadastrados</h2>
+      <span class="count-badge">{{ service.appliances().length }} itens</span>
+    </div>
+
+    <button type="button" class="add-btn" (click)="openAddModal()">
+      <span class="btn-icon">+</span>
+      <span class="btn-text">Novo Aparelho</span>
+    </button>
+  </div>
+
+  @if (service.sortedAppliances().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">🔌</span>
+      <h3>Nenhum aparelho cadastrado</h3>
+      <p>Clique em "+ Novo Aparelho" para adicionar seu primeiro eletrodoméstico.</p>
+      <button type="button" class="btn btn--submit" (click)="openAddModal()">
+        Adicionar Aparelho
+      </button>
+    </div>
+  } @else {
+    <div class="appliance-grid">
+      @for (appliance of service.sortedAppliances(); track appliance.id) {
+        <app-appliance-card
+          [appliance]="appliance"
+          (onToggle)="handleToggle($event)"
+          (onDelete)="handleDelete($event)"
+          (onEdit)="openEditModal($event)"
+        />
+      }
+    </div>
+  }
+
+  <!-- Floating Action Button (Mobile) -->
+  <button 
+    type="button" 
+    class="fab-btn" 
+    (click)="openAddModal()" 
+    aria-label="Adicionar novo aparelho"
+  >
+    +
+  </button>
+</section>
+
+<!-- Modal Overlay Form -->
+@if (showForm()) {
+  <app-appliance-form
+    [editingAppliance]="editingAppliance()"
+    (onSave)="handleSave($event)"
+    (onCancel)="closeModal()"
+  />
+}
