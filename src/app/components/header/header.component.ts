@@ -1,7 +1,7 @@
 import { Component, inject, computed } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { ApplianceService } from '../../services/appliance.service';
-import { MAX_AMPS } from '../../constants/electrical.constants';
+import { MAX_AMPS, VOLTAGE } from '../../constants/electrical.constants';
 
 @Component({
   selector: 'app-header',
@@ -13,6 +13,7 @@ import { MAX_AMPS } from '../../constants/electrical.constants';
 export class HeaderComponent {
   public applianceService = inject(ApplianceService);
   public readonly MAX_AMPS = MAX_AMPS;
+  public readonly VOLTAGE = VOLTAGE;
 
   public activeAppliancesCount = computed(() => 
     this.applianceService.appliances().filter(a => a.isOn).length

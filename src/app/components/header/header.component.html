@@ -4,6 +4,12 @@
     <!-- Left Column -->
     <div class="header__col">
       <div class="stat-card">
+        <div class="stat-card__label">Tensão da Rede</div>
+        <div class="stat-card__value">
+          {{ VOLTAGE }} <span class="stat-card__unit">V</span>
+        </div>
+      </div>
+      <div class="stat-card">
         <div class="stat-card__label">Potência Total</div>
         <div class="stat-card__value">
           {{ applianceService.totalPowerWatts() | number:'1.0-0' }} <span class="stat-card__unit">W</span>

@@ -1,66 +1,55 @@
-<div class="landing">
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero__content">
-      <div class="hero__icon-wrapper">
-        <svg class="hero__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <div class="hero__icon-glow"></div>
-      </div>
-
-      <h1 class="hero__title">
-        Medidor de Energia
-        <span class="hero__title-accent">Residencial</span>
+<div class="landing-page">
+  <!-- Animated Background Orbs -->
+  <div class="bg-container">
+    <div class="glow-orb glow-orb--1"></div>
+    <div class="glow-orb glow-orb--2"></div>
+  </div>
+  
+  <main class="landing-content">
+    <section class="hero-section">
+      <div class="hero-badge">⚡ Simulador Inteligente</div>
+      <h1 class="hero-title">
+        Medidor de <br/>
+        <span class="text-gradient">Energia Residencial</span>
       </h1>
-
-      <p class="hero__description">
-        Descubra se a rede elétrica da sua casa aguenta todos os seus aparelhos ligados ao mesmo tempo.
-        Adicione seus eletrodomésticos, simule cenários e evite sobrecargas.
+      <p class="hero-subtitle">
+        Descubra se a sua rede elétrica aguenta todos os seus aparelhos ligados ao mesmo tempo. Evite quedas de energia e sobrecargas na fiação.
       </p>
-
-      <a routerLink="/medidor" class="hero__cta">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cta-icon">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-        </svg>
-        Começar Medição
+      
+      <a routerLink="/medidor" class="hero-cta">
+        Iniciar Simulação
+        <span class="cta-arrow">→</span>
       </a>
-    </div>
-  </section>
+    </section>
 
-  <!-- Features Section -->
-  <section class="features">
-    <h2 class="features__heading">Como funciona</h2>
-
-    <div class="features__grid">
+    <section class="features-section">
       <div class="feature-card">
-        <div class="feature-card__icon">🔌</div>
-        <h3 class="feature-card__title">Cadastre seus aparelhos</h3>
-        <p class="feature-card__text">
-          Adicione os eletrodomésticos da sua casa com a potência em watts de cada um.
-        </p>
+        <div class="feature-icon feature-icon--blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="feature-title">Cadastre seus aparelhos</h3>
+        <p class="feature-desc">Adicione qualquer eletrodoméstico informando a potência máxima em watts.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-card__icon">📊</div>
-        <h3 class="feature-card__title">Simule o consumo</h3>
-        <p class="feature-card__text">
-          Ligue e desligue aparelhos para ver em tempo real o consumo total e a corrente na fiação.
-        </p>
+        <div class="feature-icon feature-icon--green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="feature-title">Simule o consumo</h3>
+        <p class="feature-desc">Ligue e desligue os itens para ver a carga em tempo real.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-card__icon">🛡️</div>
-        <h3 class="feature-card__title">Evite sobrecargas</h3>
-        <p class="feature-card__text">
-          O sistema alerta quando o consumo se aproxima ou ultrapassa o limite do seu disjuntor.
-        </p>
+        <div class="feature-icon feature-icon--red">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="9" x2="12" y2="13" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="feature-title">Evite sobrecargas</h3>
+        <p class="feature-desc">O sistema alerta automaticamente quando o limite de amperes for excedido.</p>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
-  <!-- Footer -->
   <footer class="landing-footer">
-    <p>Medidor de Energia Residencial &mdash; Projeto pessoal</p>
+    <p>Criado para monitoramento de energia residencial &copy; 2026</p>
   </footer>
 </div>
