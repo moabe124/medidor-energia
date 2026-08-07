@@ -3,9 +3,14 @@
   [class.appliance-card--active]="appliance().isOn"
 >
   <div class="appliance-card__header">
-    <h3 class="appliance-card__title" [title]="appliance().name">
-      {{ appliance().name }}
-    </h3>
+    <div class="appliance-card__title-wrapper">
+      <h3 class="appliance-card__title" [title]="appliance().name">
+        {{ appliance().name }}
+      </h3>
+      <span class="usage-badge" [ngClass]="'usage-badge--' + usageCategory().class">
+        {{ usageCategory().label }}
+      </span>
+    </div>
 
     <label class="toggle-switch" [attr.aria-label]="'Ligar ou desligar ' + appliance().name">
       <input 

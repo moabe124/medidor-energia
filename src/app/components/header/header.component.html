@@ -1,53 +1,74 @@
-<header 
-  class="header" 
-  [class.header--safe]="service.loadStatus() === 'safe'"
-  [class.header--warning]="service.loadStatus() === 'warning'"
-  [class.header--overload]="service.loadStatus() === 'overload'"
->
+<header class="header">
   <div class="header__container">
-    <div class="header__brand">
-      <h1 class="header__title">Medidor de Energia</h1>
-      <p class="header__subtitle">Monitoramento 220V • Fiação 41A</p>
+    
+    <!-- Left Column -->
+    <div class="header__col">
+      <div class="stat-card">
+        <div class="stat-card__label">Potência Total</div>
+        <div class="stat-card__value">
+          {{ applianceService.totalPowerWatts() | number:'1.0-0' }} <span class="stat-card__unit">W</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__label">Aparelhos Ativos</div>
+        <div class="stat-card__value">
+          {{ activeAppliancesCount() }} <span class="stat-card__unit">/ {{ totalAppliancesCount() }}</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Giant Bulb Dashboard Display -->
-    <div class="giant-bulb-wrapper" [ngClass]="'status--' + service.loadStatus()">
-      <div class="giant-bulb">
-        <!-- SVG Bulb Icon -->
-        <svg class="bulb-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2Z" class="bulb-glass" />
-          <path d="M9 20H15V21C15 21.55 14.55 22 14 22H10C9.45 22 9 21.55 9 21V20Z" class="bulb-base" />
-          <path d="M10 13L12 9L14 13" class="bulb-filament" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Center Column (Gauge) -->
+    <div class="header__col header__col--center">
+      <div class="gauge" [ngClass]="'gauge--' + applianceService.loadStatus()">
+        <svg class="gauge__svg" width="160" height="160" viewBox="0 0 160 160">
+          <circle 
+            class="gauge__track"
+            cx="80" cy="80" [attr.r]="radius"
+            fill="none" stroke-width="12" stroke-linecap="round"
+            [attr.stroke-dasharray]="arcLength + ' ' + circumference"
+            stroke-dashoffset="0"
+            transform="rotate(135 80 80)"
+          />
+          <circle 
+            class="gauge__progress"
+            cx="80" cy="80" [attr.r]="radius"
+            fill="none" stroke-width="12" stroke-linecap="round"
+            [attr.stroke-dasharray]="arcLength + ' ' + circumference"
+            [attr.stroke-dashoffset]="dashoffset()"
+            transform="rotate(135 80 80)"
+          />
         </svg>
-        <div class="bulb-glow"></div>
-      </div>
-
-      <div class="bulb-metrics">
-        <div class="bulb-metrics__primary">
-          <span class="amps-value">{{ service.totalCurrentAmps() | number:'1.2-2' }}</span>
-          <span class="amps-unit">A</span>
-          <span class="amps-limit">/ {{ maxAmps }}A</span>
+        <div class="gauge__content">
+          <div class="gauge__value">
+            {{ applianceService.totalCurrentAmps() | number:'1.1-1' }}<span class="gauge__unit">A</span>
+          </div>
+          <div class="gauge__sub">de {{ MAX_AMPS }} A</div>
         </div>
+      </div>
+    </div>
 
-        <div class="bulb-metrics__secondary">
-          <span class="watts-value">⚡ {{ service.totalPowerWatts() | number:'1.0-0' }} W</span>
-          <span class="status-badge" [ngClass]="'badge--' + service.loadStatus()">
-            @switch (service.loadStatus()) {
-              @case ('safe') { 🟢 SEGURO }
-              @case ('warning') { 🟡 ATENÇÃO }
-              @case ('overload') { 🔴 SOBRECARGA! }
-            }
-          </span>
+    <!-- Right Column -->
+    <div class="header__col">
+      <div class="stat-card">
+        <div class="stat-card__label">Status</div>
+        <div class="stat-card__badge" [ngClass]="'stat-card__badge--' + applianceService.loadStatus()">
+          {{ statusLabel() }}
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__label">Capacidade Livre</div>
+        <div class="stat-card__value">
+          {{ freeCapacity() | number:'1.1-1' }} <span class="stat-card__unit">A</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="header__progress-container">
-    <div 
-      class="header__progress-bar"
-      [ngClass]="'progress--' + service.loadStatus()"
-      [style.width.%]="service.usagePercent()"
-    ></div>
+  <!-- Bottom progress bar -->
+  <div class="header__progress-bar">
+    <div class="header__progress-fill" 
+         [ngClass]="'header__progress-fill--' + applianceService.loadStatus()"
+         [style.width.%]="applianceService.usagePercent()">
+    </div>
   </div>
 </header>

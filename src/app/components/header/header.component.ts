@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { ApplianceService } from '../../services/appliance.service';
 import { MAX_AMPS } from '../../constants/electrical.constants';
@@ -8,9 +8,41 @@ import { MAX_AMPS } from '../../constants/electrical.constants';
   standalone: true,
   imports: [CommonModule, DecimalPipe],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss',
+  styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
-  readonly service = inject(ApplianceService);
-  readonly maxAmps = MAX_AMPS;
+  public applianceService = inject(ApplianceService);
+  public readonly MAX_AMPS = MAX_AMPS;
+
+  public activeAppliancesCount = computed(() => 
+    this.applianceService.appliances().filter(a => a.isOn).length
+  );
+
+  public totalAppliancesCount = computed(() => 
+    this.applianceService.appliances().length
+  );
+
+  public freeCapacity = computed(() => 
+    Math.max(0, this.MAX_AMPS - this.applianceService.totalCurrentAmps())
+  );
+
+  public statusLabel = computed(() => {
+    switch (this.applianceService.loadStatus()) {
+      case 'safe': return 'SEGURO';
+      case 'warning': return 'ATENÇÃO';
+      case 'overload': return 'SOBRECARGA';
+      default: return 'SEGURO';
+    }
+  });
+
+  // Gauge calculations
+  public readonly radius = 62;
+  public readonly circumference = 2 * Math.PI * this.radius;
+  public readonly arcLength = this.circumference * 0.75; // 270 degrees
+  
+  public dashoffset = computed(() => {
+    // Limit usage to 100% for visual calculation
+    const usage = Math.min(100, Math.max(0, this.applianceService.usagePercent()));
+    return this.arcLength * (1 - usage / 100);
+  });
 }
