@@ -30,6 +30,11 @@
 
     <div class="metric-item">
       <span class="metric-item__icon">🔌</span>
+      <span class="metric-item__value">{{ appliance().voltage }}V</span>
+    </div>
+
+    <div class="metric-item">
+      <span class="metric-item__icon">🔌</span>
       <span class="metric-item__value">{{ appliance().currentAmps | number:'1.2-2' }} A</span>
     </div>
   </div>

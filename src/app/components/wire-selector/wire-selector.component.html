@@ -1,0 +1,48 @@
+<div class="wire-selector">
+  <div class="wire-selector__header">
+    <h3 class="wire-selector__title">Fiação da Casa</h3>
+    <span class="wire-selector__subtitle">Capacidade atual: {{ service.maxAmps() }}A</span>
+  </div>
+
+  <div class="wire-selector__visual">
+    <div class="wire-selector__icon-container">
+      <svg class="wire-svg" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- Parte de cobre desencapada -->
+        <path d="M100 50 L180 50" 
+              fill="none" 
+              stroke="#D35400" 
+              [attr.stroke-width]="service.selectedWire().strokeWidth"
+              stroke-linecap="round"
+              class="wire-copper" />
+
+        <!-- Energia fluindo -->
+        <path d="M100 50 L180 50" 
+              fill="none" 
+              stroke="#FFF" 
+              [attr.stroke-width]="service.selectedWire().strokeWidth * 0.4 + 1"
+              stroke-linecap="round"
+              class="wire-energy"
+              [class.wire-energy--active]="service.totalCurrentAmps() > 0"
+              [class.wire-energy--overload]="service.loadStatus() === 'overload'" />
+        
+        <!-- Parte encapada (PVC) -->
+        <path d="M20 50 L110 50" 
+              fill="none" 
+              stroke="#333333" 
+              [attr.stroke-width]="service.selectedWire().strokeWidth + 6"
+              stroke-linecap="round"
+              class="wire-pvc" />
+      </svg>
+    </div>
+  </div>
+
+  <div class="wire-selector__options">
+    <button 
+      *ngFor="let wire of wires"
+      class="wire-btn"
+      [class.wire-btn--active]="service.selectedWire().id === wire.id"
+      (click)="selectWire(wire.id)">
+      {{ wire.label }}
+    </button>
+  </div>
+</div>

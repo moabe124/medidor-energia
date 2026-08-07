@@ -134,6 +134,37 @@
       pointer-events: none;
     }
   }
+
+  .voltage-toggle {
+    display: flex;
+    gap: 0.5rem;
+    
+    .toggle-btn {
+      flex: 1;
+      padding: 10px 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-primary);
+      }
+      
+      &--active {
+        background: var(--accent-green);
+        color: #000;
+        border-color: var(--accent-green);
+        font-weight: 600;
+        box-shadow: 0 0 12px rgba(0, 255, 128, 0.2);
+      }
+    }
+  }
 }
 
 .estimation-box {

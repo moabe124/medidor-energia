@@ -1,7 +1,7 @@
 import { Component, input, output, signal, computed, effect } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { VOLTAGE } from '../../constants/electrical.constants';
+// REMOVED: import { VOLTAGE } from '../../constants/electrical.constants';
 import { Appliance } from '../../models/appliance.model';
 
 // Signal Forms APIs conforme especificado no Requisito 5.2 / 7.5
@@ -52,12 +52,13 @@ export function form<T extends Record<string, any>>(
 })
 export class ApplianceFormComponent {
   editingAppliance = input<Appliance | null>(null);
-  onSave = output<{ name: string; powerWatts: number }>();
+  onSave = output<{ name: string; powerWatts: number; voltage: 110 | 220 }>();
   onCancel = output<void>();
 
   // Signal Form fields
   nameField = signal('');
   powerField = signal<number>(0);
+  voltageField = signal<110 | 220>(220);
 
   // Signal Form definition (Angular 22)
   applianceForm = form(
@@ -74,7 +75,7 @@ export class ApplianceFormComponent {
   );
 
   // Preview da corrente estimada
-  estimatedCurrent = computed(() => (this.powerField() || 0) / VOLTAGE);
+  estimatedCurrent = computed(() => (this.powerField() || 0) / this.voltageField());
 
   constructor() {
     // Preencher campos quando editando ou resetar quando criando
@@ -83,9 +84,11 @@ export class ApplianceFormComponent {
       if (appliance) {
         this.nameField.set(appliance.name);
         this.powerField.set(appliance.powerWatts);
+        this.voltageField.set(appliance.voltage || 220);
       } else {
         this.nameField.set('');
         this.powerField.set(0);
+        this.voltageField.set(220);
       }
     });
   }
@@ -99,6 +102,7 @@ export class ApplianceFormComponent {
       this.onSave.emit({
         name: this.nameField(),
         powerWatts: Number(this.powerField()),
+        voltage: this.voltageField(),
       });
     }
   }

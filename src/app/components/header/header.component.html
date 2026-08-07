@@ -4,9 +4,17 @@
     <!-- Left Column -->
     <div class="header__col">
       <div class="stat-card">
-        <div class="stat-card__label">Tensão da Rede</div>
-        <div class="stat-card__value">
-          {{ VOLTAGE }} <span class="stat-card__unit">V</span>
+        <div class="stat-card__label">Filtro de Voltagem</div>
+        <div class="voltage-filter">
+          <button 
+            [class.active]="applianceService.globalVoltageFilter() === 'ALL'" 
+            (click)="applianceService.setGlobalVoltageFilter('ALL')">Todas</button>
+          <button 
+            [class.active]="applianceService.globalVoltageFilter() === 110" 
+            (click)="applianceService.setGlobalVoltageFilter(110)">110V</button>
+          <button 
+            [class.active]="applianceService.globalVoltageFilter() === 220" 
+            (click)="applianceService.setGlobalVoltageFilter(220)">220V</button>
         </div>
       </div>
       <div class="stat-card">
@@ -48,7 +56,7 @@
           <div class="gauge__value">
             {{ applianceService.totalCurrentAmps() | number:'1.1-1' }}<span class="gauge__unit">A</span>
           </div>
-          <div class="gauge__sub">de {{ MAX_AMPS }} A</div>
+          <div class="gauge__sub">de {{ applianceService.maxAmps() }} A</div>
         </div>
       </div>
     </div>

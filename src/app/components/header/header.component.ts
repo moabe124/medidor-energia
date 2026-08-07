@@ -1,7 +1,7 @@
 import { Component, inject, computed } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { ApplianceService } from '../../services/appliance.service';
-import { MAX_AMPS, VOLTAGE } from '../../constants/electrical.constants';
+import { VOLTAGE } from '../../constants/electrical.constants';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +12,6 @@ import { MAX_AMPS, VOLTAGE } from '../../constants/electrical.constants';
 })
 export class HeaderComponent {
   public applianceService = inject(ApplianceService);
-  public readonly MAX_AMPS = MAX_AMPS;
   public readonly VOLTAGE = VOLTAGE;
 
   public activeAppliancesCount = computed(() => 
@@ -24,7 +23,7 @@ export class HeaderComponent {
   );
 
   public freeCapacity = computed(() => 
-    Math.max(0, this.MAX_AMPS - this.applianceService.totalCurrentAmps())
+    Math.max(0, this.applianceService.maxAmps() - this.applianceService.totalCurrentAmps())
   );
 
   public statusLabel = computed(() => {

@@ -42,10 +42,32 @@
         </div>
       </div>
 
+      <div class="form-group">
+        <label>Tensão de Operação (Voltagem)</label>
+        <div class="voltage-toggle">
+          <button 
+            type="button" 
+            class="toggle-btn" 
+            [class.toggle-btn--active]="voltageField() === 110"
+            (click)="voltageField.set(110)"
+          >
+            110V
+          </button>
+          <button 
+            type="button" 
+            class="toggle-btn" 
+            [class.toggle-btn--active]="voltageField() === 220"
+            (click)="voltageField.set(220)"
+          >
+            220V
+          </button>
+        </div>
+      </div>
+
       <!-- Live Current Estimation Preview -->
       <div class="estimation-box">
         <div class="estimation-box__label">
-          <span>🔌 Corrente Estimada (220V):</span>
+          <span>🔌 Corrente Estimada ({{ voltageField() }}V):</span>
           <span class="estimation-value">{{ estimatedCurrent() | number:'1.2-2' }} A</span>
         </div>
         <div class="estimation-box__bar">

@@ -1,9 +1,11 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
 import { Appliance } from '../models/appliance.model';
-import { SEED_APPLIANCES } from '../data/seed-appliances';
-import { VOLTAGE, SAFE_THRESHOLD, MAX_AMPS } from '../constants/electrical.constants';
+import { environment } from '../../environments/environment';
+import { VOLTAGE } from '../constants/electrical.constants';
+import { STANDARD_WIRES, WireGauge } from '../models/wire.model';
 
 const STORAGE_KEY = 'medidor-energia-appliances';
+const WIRE_STORAGE_KEY = 'medidor-energia-wire';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +13,26 @@ const STORAGE_KEY = 'medidor-energia-appliances';
 export class ApplianceService {
   // Signal privado (fonte da verdade)
   private _appliances = signal<Appliance[]>(this.loadFromStorage());
+  private _selectedWireId = signal<string>(this.loadWireFromStorage());
+  private _globalVoltageFilter = signal<'ALL' | 110 | 220>('ALL');
 
   // Signals públicos (read-only)
   readonly appliances = this._appliances.asReadonly();
+  readonly globalVoltageFilter = this._globalVoltageFilter.asReadonly();
+  
+  readonly selectedWire = computed<WireGauge>(() => {
+    return STANDARD_WIRES.find(w => w.id === this._selectedWireId()) || STANDARD_WIRES[3];
+  });
+  
+  readonly maxAmps = computed(() => this.selectedWire().maxAmps);
 
   readonly sortedAppliances = computed(() => {
-    return [...this._appliances()].sort((a, b) => b.powerWatts - a.powerWatts);
+    let list = [...this._appliances()];
+    const filter = this._globalVoltageFilter();
+    if (filter !== 'ALL') {
+      list = list.filter(a => a.voltage === filter);
+    }
+    return list.sort((a, b) => b.powerWatts - a.powerWatts);
   });
 
   readonly totalCurrentAmps = computed(() =>
@@ -33,21 +49,26 @@ export class ApplianceService {
 
   readonly loadStatus = computed((): 'safe' | 'warning' | 'overload' => {
     const total = this.totalCurrentAmps();
-    if (total <= SAFE_THRESHOLD) return 'safe';
-    if (total <= MAX_AMPS) return 'warning';
+    const limit = this.maxAmps();
+    const safeLimit = limit * 0.8;
+    
+    if (total <= safeLimit) return 'safe';
+    if (total <= limit) return 'warning';
     return 'overload';
   });
 
   readonly usagePercent = computed(() =>
-    Math.min((this.totalCurrentAmps() / MAX_AMPS) * 100, 100)
+    Math.min((this.totalCurrentAmps() / this.maxAmps()) * 100, 100)
   );
 
   constructor() {
     // Auto-persist ao localStorage
     effect(() => {
       const data = this._appliances();
+      const wireId = this._selectedWireId();
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        localStorage.setItem(WIRE_STORAGE_KEY, wireId);
       } catch (e) {
         console.error('Erro ao salvar no localStorage:', e);
       }
@@ -55,7 +76,7 @@ export class ApplianceService {
   }
 
   private loadFromStorage(): Appliance[] {
-    if (typeof localStorage === 'undefined') return SEED_APPLIANCES;
+    if (typeof localStorage === 'undefined') return environment.seedAppliances;
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
@@ -67,15 +88,35 @@ export class ApplianceService {
         /* fall through */
       }
     }
-    return SEED_APPLIANCES;
+    return environment.seedAppliances;
   }
 
-  addAppliance(name: string, powerWatts: number): void {
+  private loadWireFromStorage(): string {
+    if (typeof localStorage === 'undefined') return '6.0';
+    const stored = localStorage.getItem(WIRE_STORAGE_KEY);
+    if (stored && STANDARD_WIRES.some(w => w.id === stored)) {
+      return stored;
+    }
+    return '6.0'; // Default
+  }
+
+  setGlobalVoltageFilter(val: 'ALL' | 110 | 220): void {
+    this._globalVoltageFilter.set(val);
+  }
+
+  setWire(id: string): void {
+    if (STANDARD_WIRES.some(w => w.id === id)) {
+      this._selectedWireId.set(id);
+    }
+  }
+
+  addAppliance(name: string, powerWatts: number, voltage: 110 | 220): void {
     const newAppliance: Appliance = {
       id: crypto.randomUUID(),
       name: name.trim(),
       powerWatts,
-      currentAmps: powerWatts / VOLTAGE,
+      voltage,
+      currentAmps: powerWatts / voltage,
       isOn: false,
     };
     this._appliances.update(list => [...list, newAppliance]);
@@ -85,11 +126,11 @@ export class ApplianceService {
     this._appliances.update(list => list.filter(a => a.id !== id));
   }
 
-  updateAppliance(id: string, name: string, powerWatts: number): void {
+  updateAppliance(id: string, name: string, powerWatts: number, voltage: 110 | 220): void {
     this._appliances.update(list =>
       list.map(a =>
         a.id === id
-          ? { ...a, name: name.trim(), powerWatts, currentAmps: powerWatts / VOLTAGE }
+          ? { ...a, name: name.trim(), powerWatts, voltage, currentAmps: powerWatts / voltage }
           : a
       )
     );
