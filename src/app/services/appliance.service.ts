@@ -95,7 +95,12 @@ export class ApplianceService {
       try {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+          // Migration for old data without voltage
+          return parsed.map((a: any) => ({
+            ...a,
+            voltage: a.voltage || 220,
+            currentAmps: a.currentAmps || (a.powerWatts / (a.voltage || 220))
+          }));
         }
       } catch {
         /* fall through */
