@@ -7,9 +7,6 @@
         <div class="stat-card__label">Filtro de Voltagem</div>
         <div class="voltage-filter">
           <button 
-            [class.active]="applianceService.globalVoltageFilter() === 'ALL'" 
-            (click)="applianceService.setGlobalVoltageFilter('ALL')">Todas</button>
-          <button 
             [class.active]="applianceService.globalVoltageFilter() === 110" 
             (click)="applianceService.setGlobalVoltageFilter(110)">110V</button>
           <button 

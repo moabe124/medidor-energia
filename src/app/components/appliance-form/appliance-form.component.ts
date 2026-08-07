@@ -52,13 +52,13 @@ export function form<T extends Record<string, any>>(
 })
 export class ApplianceFormComponent {
   editingAppliance = input<Appliance | null>(null);
-  onSave = output<{ name: string; powerWatts: number; voltage: 110 | 220 }>();
+  onSave = output<{ name: string; powerWatts: number; voltage: 110 | 220 | 'BIVOLT' }>();
   onCancel = output<void>();
 
   // Signal Form fields
   nameField = signal('');
   powerField = signal<number>(0);
-  voltageField = signal<110 | 220>(220);
+  voltageField = signal<110 | 220 | 'BIVOLT'>(220);
 
   // Signal Form definition (Angular 22)
   applianceForm = form(
@@ -75,7 +75,11 @@ export class ApplianceFormComponent {
   );
 
   // Preview da corrente estimada
-  estimatedCurrent = computed(() => (this.powerField() || 0) / this.voltageField());
+  estimatedCurrent = computed(() => {
+    const v = this.voltageField();
+    if (v === 'BIVOLT') return (this.powerField() || 0) / 220; // Estimativa média (220V) para o preview
+    return (this.powerField() || 0) / v;
+  });
 
   constructor() {
     // Preencher campos quando editando ou resetar quando criando

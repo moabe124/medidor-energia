@@ -46,7 +46,7 @@ export class ApplianceListComponent {
     }
   }
 
-  handleSave(data: { name: string; powerWatts: number; voltage: 110 | 220 }): void {
+  handleSave(data: { name: string; powerWatts: number; voltage: 110 | 220 | 'BIVOLT' }): void {
     const currentEditing = this.editingAppliance();
     if (currentEditing) {
       this.service.updateAppliance(currentEditing.id, data.name, data.powerWatts, data.voltage);

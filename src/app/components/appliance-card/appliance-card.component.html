@@ -1,13 +1,20 @@
 <div 
   class="appliance-card" 
-  [class.appliance-card--active]="appliance().isOn"
+  [class.appliance-card--active]="appliance().isOn && appliance().status !== 'burned'"
+  [class.appliance-card--burned]="appliance().status === 'burned'"
+  [class.appliance-card--weak]="appliance().status === 'weak'"
 >
   <div class="appliance-card__header">
     <div class="appliance-card__title-wrapper">
       <h3 class="appliance-card__title" [title]="appliance().name">
         {{ appliance().name }}
+        <span *ngIf="appliance().status === 'burned'" title="Aparelho Queimado">💣</span>
+        <span *ngIf="appliance().status === 'weak'" title="Funcionando Fraco">🐢</span>
       </h3>
-      <span class="usage-badge" [ngClass]="'usage-badge--' + usageCategory().class">
+      <span *ngIf="appliance().status === 'burned'" class="usage-badge usage-badge--high">
+        Queimado!
+      </span>
+      <span *ngIf="appliance().status !== 'burned'" class="usage-badge" [ngClass]="'usage-badge--' + usageCategory().class">
         {{ usageCategory().label }}
       </span>
     </div>
@@ -16,6 +23,7 @@
       <input 
         type="checkbox" 
         [checked]="appliance().isOn" 
+        [disabled]="appliance().status === 'burned'"
         (change)="toggle()"
       />
       <span class="slider"></span>
@@ -40,8 +48,10 @@
   </div>
 
   <div class="appliance-card__footer">
-    <span class="status-indicator" [class.status-indicator--on]="appliance().isOn">
-      {{ appliance().isOn ? 'LIGADO' : 'DESLIGADO' }}
+    <span class="status-indicator" 
+      [class.status-indicator--on]="appliance().isOn && appliance().status !== 'burned'"
+      [class.status-indicator--burned]="appliance().status === 'burned'">
+      {{ appliance().status === 'burned' ? 'INOPERANTE' : (appliance().isOn ? 'LIGADO' : 'DESLIGADO') }}
     </span>
 
     <div class="appliance-card__actions">

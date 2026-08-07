@@ -14,7 +14,7 @@ export class ApplianceService {
   // Signal privado (fonte da verdade)
   private _appliances = signal<Appliance[]>(this.loadFromStorage());
   private _selectedWireId = signal<string>(this.loadWireFromStorage());
-  private _globalVoltageFilter = signal<'ALL' | 110 | 220>('ALL');
+  private _globalVoltageFilter = signal<110 | 220>(220);
 
   // Signals públicos (read-only)
   readonly appliances = this._appliances.asReadonly();
@@ -27,14 +27,23 @@ export class ApplianceService {
   readonly maxAmps = computed(() => this.selectedWire().maxAmps);
 
   readonly sortedAppliances = computed(() => {
-    const filter = this._globalVoltageFilter();
+    const globalV = this._globalVoltageFilter();
     const list = this._appliances().map(a => {
-      if (filter === 'ALL') return a;
-      return {
-        ...a,
-        voltage: filter,
-        currentAmps: a.powerWatts / filter
-      };
+      let status: 'normal' | 'burned' | 'weak' = 'normal';
+      let currentAmps = 0;
+
+      if (a.voltage === 'BIVOLT' || a.voltage === globalV) {
+        status = 'normal';
+        currentAmps = a.powerWatts / globalV;
+      } else if (globalV === 220 && a.voltage === 110) {
+        status = 'burned';
+        currentAmps = 0; // Se queimou, não puxa mais corrente (ou desarmou)
+      } else if (globalV === 110 && a.voltage === 220) {
+        status = 'weak';
+        currentAmps = (a.powerWatts / 4) / 110; // Potência cai pra 1/4
+      }
+
+      return { ...a, status, currentAmps };
     });
     return list.sort((a, b) => b.powerWatts - a.powerWatts);
   });
@@ -104,7 +113,7 @@ export class ApplianceService {
     return '6.0'; // Default
   }
 
-  setGlobalVoltageFilter(val: 'ALL' | 110 | 220): void {
+  setGlobalVoltageFilter(val: 110 | 220): void {
     this._globalVoltageFilter.set(val);
   }
 
@@ -114,13 +123,13 @@ export class ApplianceService {
     }
   }
 
-  addAppliance(name: string, powerWatts: number, voltage: 110 | 220): void {
+  addAppliance(name: string, powerWatts: number, voltage: 110 | 220 | 'BIVOLT'): void {
     const newAppliance: Appliance = {
       id: crypto.randomUUID(),
       name: name.trim(),
       powerWatts,
       voltage,
-      currentAmps: powerWatts / voltage,
+      currentAmps: voltage === 'BIVOLT' ? 0 : powerWatts / voltage,
       isOn: false,
     };
     this._appliances.update(list => [...list, newAppliance]);
@@ -130,11 +139,11 @@ export class ApplianceService {
     this._appliances.update(list => list.filter(a => a.id !== id));
   }
 
-  updateAppliance(id: string, name: string, powerWatts: number, voltage: 110 | 220): void {
+  updateAppliance(id: string, name: string, powerWatts: number, voltage: 110 | 220 | 'BIVOLT'): void {
     this._appliances.update(list =>
       list.map(a =>
         a.id === id
-          ? { ...a, name: name.trim(), powerWatts, voltage, currentAmps: powerWatts / voltage }
+          ? { ...a, name: name.trim(), powerWatts, voltage, currentAmps: voltage === 'BIVOLT' ? 0 : powerWatts / voltage }
           : a
       )
     );
