@@ -27,22 +27,26 @@ export class ApplianceService {
   readonly maxAmps = computed(() => this.selectedWire().maxAmps);
 
   readonly sortedAppliances = computed(() => {
-    let list = [...this._appliances()];
     const filter = this._globalVoltageFilter();
-    if (filter !== 'ALL') {
-      list = list.filter(a => a.voltage === filter);
-    }
+    const list = this._appliances().map(a => {
+      if (filter === 'ALL') return a;
+      return {
+        ...a,
+        voltage: filter,
+        currentAmps: a.powerWatts / filter
+      };
+    });
     return list.sort((a, b) => b.powerWatts - a.powerWatts);
   });
 
   readonly totalCurrentAmps = computed(() =>
-    this._appliances()
+    this.sortedAppliances()
       .filter(a => a.isOn)
       .reduce((sum, a) => sum + a.currentAmps, 0)
   );
 
   readonly totalPowerWatts = computed(() =>
-    this._appliances()
+    this.sortedAppliances()
       .filter(a => a.isOn)
       .reduce((sum, a) => sum + a.powerWatts, 0)
   );
