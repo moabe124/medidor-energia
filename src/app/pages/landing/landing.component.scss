@@ -8,6 +8,64 @@
   font-family: 'Inter', sans-serif;
 }
 
+// Header
+.landing-header {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  padding: 24px;
+  background: transparent;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text-primary, #ffffff);
+  
+  svg {
+    width: 24px;
+    height: 24px;
+    color: var(--accent-green, #22c55e);
+  }
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary, #a1a1aa);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  &:hover {
+    color: var(--text-primary, #ffffff);
+  }
+}
+
 .bg-container {
   position: absolute;
   top: 0;
@@ -225,16 +283,62 @@
 
 // Footer
 .landing-footer {
-  text-align: center;
-  padding: 32px 24px;
+  padding: 40px 24px;
   position: relative;
   z-index: 1;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
   
-  p {
+  > p {
     font-size: 0.875rem;
     color: var(--text-muted, #71717a);
     margin: 0;
+  }
+}
+
+.footer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-secondary, #a1a1aa);
+    
+    strong {
+      color: var(--text-primary, #ffffff);
+    }
+  }
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  
+  a {
+    color: var(--accent-primary, #3b82f6);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.2s;
+    
+    &:hover {
+      color: var(--accent-green, #22c55e);
+      text-decoration: underline;
+    }
   }
 }
 
